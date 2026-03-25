@@ -281,7 +281,7 @@ graph TD
 | Wrong region for resources | Data crosses regions causing latency and extra cost | Always pick the same region for every resource in your Resource Group |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 1 Implementation Guide →](documentation/phase1_resources.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase1_resources.md)**
 
 ---
 
@@ -374,7 +374,7 @@ flowchart TD
 | File path format is wrong | ADF cannot find the folder | On Windows, the path should look like `C:\Users\YourName\Data` with backslashes. On some ADF configurations, forward slashes also work. |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 2 Implementation Guide →](documentation/phase2_ir_linkedservices.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase2_ir_linkedservices.md)**
 
 ---
 
@@ -468,7 +468,7 @@ flowchart TD
 | Array typed as String instead of Array | ForEach treats the whole array as one single string item | Make sure the pipeline parameter type is set to `Array`, not `String` |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 3 Implementation Guide →](documentation/phase3_onprem_pipeline.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase3_onprem_pipeline.md)**
 
 ---
 
@@ -540,7 +540,7 @@ flowchart TD
 | Copying the wrong part of the URL into Relative URL | Linked Service + Relative URL do not combine correctly | The Base URL in the Linked Service is `https://raw.githubusercontent.com/`. The Relative URL is everything after that — the repository path and filename |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 4 Implementation Guide →](documentation/phase4_api_pipeline.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase4_api_pipeline.md)**
 
 ---
 
@@ -654,7 +654,7 @@ flowchart TD
 | State file not updated after copy | Next run reloads the same data again | The `Update_Watermark` Copy Activity must be the final step, connected on success from the main Copy Activity |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 5 Implementation Guide →](documentation/phase5_incremental_sql.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase5_incremental_sql.md)**
 
 ---
 
@@ -723,7 +723,7 @@ flowchart TD
 | SQL table does not exist | Copy Activity fails with "object not found" | Always run the DDL script (CREATE TABLE) in the SQL Query Editor before running the pipeline |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 6 Implementation Guide →](documentation/phase6_load_to_sql.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase6_load_to_sql.md)**
 
 ---
 
@@ -835,7 +835,7 @@ flowchart TD
 | Key column not set on Delta Sink | Upsert becomes a duplicate insert every run | In the Sink settings under "Key columns", always select the primary key column |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 7 Implementation Guide →](documentation/phase7_silver_transformation.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase7_silver_transformation.md)**
 
 ---
 
@@ -933,7 +933,7 @@ flowchart TD
 | `toShort()` function on a null ticket_cost | Data Flow errors on null conversion | Add a filter before aggregation to remove rows where ticket_cost is null |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 8 Implementation Guide →](documentation/phase8_gold_layer.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase8_gold_layer.md)**
 
 ---
 
@@ -1009,7 +1009,7 @@ flowchart TD
 | Parent pipeline parameters not matching child | Parameter passing fails with type mismatch error | If child pipelines have parameters, always bypass them through the parent rather than hardcoding values in the Execute Pipeline activity |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 9 Implementation Guide →](documentation/phase9_parent_pipeline.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase9_parent_pipeline.md)**
 
 ---
 
@@ -1108,7 +1108,7 @@ flowchart TD
 | Alert email goes to spam | You never see the failure notification | After first test, check your spam folder and mark the alert email as "Not Spam" |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 10 Implementation Guide →](documentation/phase10_logic_app.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase10_logic_app.md)**
 
 ---
 
@@ -1179,7 +1179,7 @@ flowchart TD
 | Start date/time is in the past | Trigger may fire immediately or behave unpredictably | Set the start time to at least 5 minutes in the future from when you publish |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 11 Implementation Guide →](documentation/phase11_triggers.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase11_triggers.md)**
 
 ---
 
@@ -1265,7 +1265,7 @@ flowchart LR
 | `adf_publish` branch modified manually | ARM templates become inconsistent | Never commit to `adf_publish` manually. It is managed entirely by ADF's Publish function |
 
 #### Implementation Guide
-For the complete step-by-step implementation with screenshots, follow the **[Phase 12 Implementation Guide →](documentation/phase12_git_devops.md)**
+For the complete step-by-step implementation guide, follow the **[Manual](documentation/phase12_git_devops.md)**
 
 ---
 
