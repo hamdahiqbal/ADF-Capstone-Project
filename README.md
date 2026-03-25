@@ -1,5 +1,5 @@
 # Enterprise Data Lakehouse: Engineering Guide
-## A 12-Phase Hybrid-Cloud Implementation on Microsoft Azure
+## A Phase-by-Phase Hybrid-Cloud Implementation on Microsoft Azure
 
 ---
 
@@ -21,7 +21,7 @@ This guide is written for complete beginners. No prior cloud experience is assum
 1.  [**Before You Begin: The Big Picture**](#before-you-begin-the-big-picture)
 2.  [**Core System Architecture**](#core-system-architecture)
 3.  [**Medallion Data Refinery Model**](#medallion-data-refinery-model)
-4.  [**The 12-Phase Engineering Guide**](#the-12-phase-engineering-guide)
+4.  [**The Phase-by-Phase Engineering Guide**](#the-12-phase-engineering-guide)
     - [Phase 1: Infrastructure & Resource Provisioning](#phase-1-infrastructure--resource-provisioning)
     - [Phase 2: Hybrid-Cloud Connectivity (SHIR)](#phase-2-hybrid-cloud-connectivity-shir)
     - [Phase 3: Metadata-Driven Ingestion](#phase-3-metadata-driven-ingestion)
