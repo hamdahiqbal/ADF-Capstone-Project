@@ -76,10 +76,10 @@ The architecture utilizes a dual-branch strategy to separate development logic f
    - **Collaboration branch:** `main`.
    - **Root folder:** `/`.
 **Verification Checkpoint:** Ensure the repository name `ADF-Capstone-Project` is correctly identified.  
-![01_git_config_form](../screenshots/phase12_git_devops/01_git_config_form.png)  
+![01_git_config_form](../screenshots/phase12_git_devOps/01_git_config_form.png)  
 
 **Verification Checkpoint:** Confirm the initial Git synchronization state is healthy.  
-![02_git_sync_success](../screenshots/phase12_git_devops/02_git_sync_success.png)  
+![02_git_sync_success](../screenshots/phase12_git_devOps/02_git_sync_success.png)  
 
 ---
 
@@ -90,10 +90,10 @@ The architecture utilizes a dual-branch strategy to separate development logic f
 1. **Working in Git:** Note the branch selector at the top left (it should say `main`).
 2. **Publishing:** Click the **Publish** button at the top.
 **Verification Checkpoint:** Initiate the manual publication trigger to generate ARM templates.  
-![06_git_publish_sidebar](../screenshots/phase12_git_devops/06_git_publish_sidebar.png)  
+![06_git_publish_sidebar](../screenshots/phase12_git_devOps/06_git_publish_sidebar.png)  
 
 **Verification Checkpoint:** Confirm that `adf_publish` appears in your GitHub branch list.  
-![08_git_branches_list](../screenshots/phase12_git_devops/08_git_branches_list.png)  
+![08_git_branches_list](../screenshots/phase12_git_devOps/08_git_branches_list.png)  
 
 ---
 
@@ -104,10 +104,10 @@ The architecture utilizes a dual-branch strategy to separate development logic f
 3. **Verification:** Open your GitHub repository on the web. You should now see all your folders (`pipeline`, `dataset`, `dataflow`) synced as JSON files.
 
 **Verification Checkpoint:** Confirm successful export of ARM templates for CI/CD usage.  
-![04_arm_export_success](../screenshots/phase12_git_devops/04_arm_export_success.png)  
+![04_arm_export_success](../screenshots/phase12_git_devOps/04_arm_export_success.png)  
 
 **Verification Checkpoint:** Final verification of the synced JSON resource folders in GitHub.  
-![03_git_repo_final](../screenshots/phase12_git_devops/03_git_repo_final.png)  
+![03_git_repo_final](../screenshots/phase12_git_devOps/03_git_repo_final.png)  
 
 ---
 
