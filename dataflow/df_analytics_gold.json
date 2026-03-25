@@ -1,0 +1,117 @@
+{
+	"name": "df_analytics_gold",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "ls_data_lake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SilverBookings"
+				},
+				{
+					"linkedService": {
+						"referenceName": "ls_data_lake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "BronzeAirline"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "ls_data_lake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "GoldSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "JoinStream"
+				},
+				{
+					"name": "TotalRevenue"
+				},
+				{
+					"name": "Rank"
+				},
+				{
+					"name": "Top5"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          booking_id as short,",
+				"          passenger_id as short,",
+				"          flight_id as short,",
+				"          airline_id as short,",
+				"          origin_airport_id as short,",
+				"          destination_airport_id as short,",
+				"          booking_date as string,",
+				"          ticket_cost as double,",
+				"          flight_duration_mins as short,",
+				"          checkin_status as boolean,",
+				"          full_name as string,",
+				"          gender as string,",
+				"          age as string,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'silver',",
+				"     folderPath: 'bookings_delta') ~> SilverBookings",
+				"source(output(",
+				"          airline_id as short,",
+				"          airline_name as string,",
+				"          country as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'bronze',",
+				"     folderPath: 'onprem',",
+				"     fileName: 'DimAirline.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> BronzeAirline",
+				"SilverBookings, BronzeAirline join(SilverBookings@airline_id == BronzeAirline@airline_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinStream",
+				"JoinStream aggregate(groupBy(airline_name),",
+				"     TotalRevenue = sum(toShort(ticket_cost))) ~> TotalRevenue",
+				"TotalRevenue window(desc(TotalRevenue, true),",
+				"     Rank = denseRank()) ~> Rank",
+				"Rank filter(Rank<=5) ~> Top5",
+				"Top5 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'gold',",
+				"     folderPath: 'business_view/top_airlines',",
+				"     overwrite: true,",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> GoldSink"
+			]
+		}
+	}
+}

@@ -1,0 +1,97 @@
+{
+	"name": "df_transform_silver",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_bronze_bookings",
+						"type": "DatasetReference"
+					},
+					"name": "BronzeBookings"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_bronze_passengers",
+						"type": "DatasetReference"
+					},
+					"name": "BronzePassengers"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "ls_data_lake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SilverSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "CleanData"
+				},
+				{
+					"name": "JoinedData"
+				},
+				{
+					"name": "UpsertLogic"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          booking_id as short,",
+				"          passenger_id as short,",
+				"          flight_id as short,",
+				"          airline_id as short,",
+				"          origin_airport_id as short,",
+				"          destination_airport_id as short,",
+				"          booking_date as string,",
+				"          ticket_cost as double,",
+				"          flight_duration_mins as short,",
+				"          checkin_status as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> BronzeBookings",
+				"source(output(",
+				"          passenger_id as short,",
+				"          full_name as string,",
+				"          gender as string,",
+				"          age as string,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> BronzePassengers",
+				"JoinedData derive(country = upper(country)) ~> CleanData",
+				"BronzeBookings, BronzePassengers join(BronzeBookings@passenger_id == BronzePassengers@passenger_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinedData",
+				"CleanData alterRow(upsertIf(true())) ~> UpsertLogic",
+				"UpsertLogic sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'silver',",
+				"     folderPath: 'bookings_delta',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: true,",
+				"     keys:['booking_id'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SilverSink"
+			]
+		}
+	}
+}

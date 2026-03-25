@@ -1,0 +1,92 @@
+{
+	"name": "pl_onprem_to_bronze",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@json(string(pipeline().parameters.FileNames))\n",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "BinarySource",
+									"storeSettings": {
+										"type": "FileServerReadSettings",
+										"recursive": true
+									},
+									"formatSettings": {
+										"type": "BinaryReadSettings"
+									}
+								},
+								"sink": {
+									"type": "BinarySink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_onprem_binary",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_filename": {
+											"value": "@item()",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_bronze_binary",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_filename": {
+											"value": "@item()",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"FileNames": {
+				"type": "array",
+				"defaultValue": [
+					"DimAirline.csv",
+					"DimAirport.json",
+					"DimFlight.csv",
+					"DimPassenger.csv"
+				]
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-03-24T22:57:59Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,6 @@
+{
+	"name": "hi-self-hosted",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

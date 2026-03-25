@@ -1,0 +1,27 @@
+{
+	"name": "ds_sql_airline_mart",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "airline_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "airline_name",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "airline_mart"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

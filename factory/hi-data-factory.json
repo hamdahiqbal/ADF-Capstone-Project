@@ -1,0 +1,9 @@
+{
+	"name": "hi-data-factory",
+	"location": "eastasia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "1dd29ccc-8647-4f92-b8e6-5757d9811603",
+		"tenantId": "12b221b3-0464-4223-89e5-888835778b58"
+	}
+}
