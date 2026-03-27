@@ -97,76 +97,6 @@ hi-data-factory/
 
 ---
 
-## Main Branch Structure (Development Source)
-
-The main branch is the development home for this project. Every folder listed below is committed and maintained by the engineering team. When Publish All is triggered, ADF reads from this branch to generate the ARM templates stored here.
-
-```
-ADF-Capstone-Project-main/
-|
-|-- pipeline/
-|       Contains one JSON file per pipeline. Each file defines the full activity
-|       graph, dependencies, and parameter schema for that pipeline.
-|       |-- api_injection.json
-|       |-- load_to_sql.json
-|       |-- pl_gold_layer.json
-|       |-- pl_master_orchestration.json
-|       |-- pl_onprem_to_bronze.json
-|       |-- pl_silver_layer.json
-|       |-- sql_to_data_lake.json
-|
-|-- dataflow/
-|       Contains the Mapping Data Flow definitions (Spark transformation graphs).
-|       |-- df_transform_silver.json
-|       |-- df_analytics_gold.json
-|
-|-- dataset/
-|       Contains one JSON file per dataset. Each file is a pointer to a specific
-|       data location with its format, schema, and parameter definitions.
-|
-|-- linkedService/
-|       Contains one JSON file per linked service (connection definition).
-|       Covers ADLS Gen2, Azure SQL, HTTP (GitHub), and the on-premises file system.
-|
-|-- integrationRuntime/
-|       Contains the Self-Hosted Integration Runtime definition (hi-shir).
-|       This registers the on-premises bridge with the factory.
-|
-|-- trigger/
-|       Contains the schedule trigger definition (tr_daily_orchestration).
-|
-|-- factory/
-|       Contains the factory-level settings file including the Git configuration
-|       that links ADF Studio to this repository.
-|
-|-- source_files/
-|       The on-premises source data files used as inputs for the Bronze ingestion
-|       pipeline. These are the raw files that the SHIR reads from the local machine.
-|       |-- DimAirline.csv          (Airline reference data — loaded to airline_mart)
-|       |-- DimAirport.json         (Airport reference data — Bronze landing only)
-|       |-- DimFlight.csv           (Flight reference data — Bronze landing only)
-|       |-- DimPassenger.csv        (Passenger data — loaded to passenger_mart and Silver)
-|       |-- empty.json              (Empty placeholder used for API sink schema testing)
-|       |-- fact_bookings_full.sql  (DDL + seed data script for the FactBookings SQL table)
-|       |-- last-load.json          (Initial watermark state file — must be uploaded to
-|                                    bronze/monitor/ in ADLS Gen2 before first pipeline run)
-|
-|-- documentation/
-|       Twelve phase-specific markdown files covering the full implementation guide,
-|       architecture diagrams, step-by-step instructions, and risk mitigation tables.
-|       Files: phase1_resources.md through phase12_git_devops.md
-|
-|-- screenshots/
-|       Organised verification screenshots for every phase of the implementation,
-|       referenced directly by the documentation markdown files.
-|
-|-- README.md
-        The master engineering guide. Covers all 12 phases end-to-end, with conceptual
-        explanations, architecture diagrams, and links to every phase document.
-```
-
----
-
 ## What Gets Deployed
 
 The following table documents every resource captured in this ARM template. This represents the complete factory state at the time of the last Publish All operation.
@@ -185,7 +115,7 @@ The following table documents every resource captured in this ARM template. This
 | Resource Name | Type | Host |
 |:---|:---|:---|
 | `AutoResolveIntegrationRuntime` | Azure (Managed) | Azure Cloud |
-| `hi-shir` | Self-Hosted | Local Windows Machine |
+| `hi-self-hosted` | Self-Hosted | Local Windows Machine |
 
 ### Datasets
 
@@ -240,7 +170,7 @@ Before running the deployment, confirm the following infrastructure and permissi
 
 **Existing Infrastructure (must already be provisioned before deploying):**
 - An Azure Data Lake Storage Gen2 account with Hierarchical Namespace enabled, and three containers named `bronze`, `silver`, and `gold`.
-- An Azure SQL Database with the `FactBookings` table populated. The DDL scripts for the mart tables (`airline_mart`, `passenger_mart`) must also be executed:
+- An Azure SQL Database with the `FactBookings` table populated. The DDL scripts for the mart tables must also be executed:
   ```sql
   CREATE TABLE airline_mart (
       airline_id   INT,
@@ -251,12 +181,13 @@ Before running the deployment, confirm the following infrastructure and permissi
       first_name   VARCHAR(100),
       last_name    VARCHAR(100),
       gender       VARCHAR(10),
+      age          INT,
       nationality  VARCHAR(50)
   );
   ```
-- A Windows machine (local or Azure VM) with the Self-Hosted Integration Runtime application installed, registered, and showing a Connected status. The SHIR must be reachable from the target factory instance.
+- A Windows machine with the Self-Hosted Integration Runtime application installed, registered, and showing a Connected status.
 - The source CSV files (`DimAirline.csv`, `DimAirport.json`, `DimFlight.csv`, `DimPassenger.csv`) in the configured on-premises folder path.
-- The `last-load.json` watermark file uploaded to the `bronze/monitor/` path in ADLS Gen2 with the following content:
+- The `last-load.json` watermark file uploaded to the `bronze/monitor/` path in ADLS Gen2:
   ```json
   { "last_load": "1900-01-01" }
   ```
@@ -280,14 +211,13 @@ az account set --subscription "<your-subscription-id>"
 
 **Step 2: Clone only this branch**
 ```bash
-git clone --branch adf_publish --single-branch ^
-  https://github.com/hamdahiqbal/ADF-Capstone-Project.git
+git clone --branch adf_publish --single-branch https://github.com/hamdahiqbal/ADF-Capstone-Project.git
 cd ADF-Capstone-Project/hi-data-factory
 ```
 
 **Step 3: Fill in the parameter file**
 
-Open `ARMTemplateParametersForFactory.json` and replace the empty string values for all three secret parameters:
+Open `ARMTemplateParametersForFactory.json` and replace the empty string values for the secret parameters:
 ```json
 {
     "ls_data_lake_accountKey": "<your-adls-storage-account-key>",
@@ -305,8 +235,6 @@ az deployment group create \
 ```
 
 **Step 5: Apply Global Parameters (if applicable)**
-
-If the factory uses global parameters, apply them after deployment:
 ```bash
 az datafactory update \
   --resource-group <your-resource-group-name> \
@@ -343,7 +271,7 @@ The complete list of parameters defined in `ARMTemplateParametersForFactory.json
 |:---|:---|:---|:---|
 | `factoryName` | String | Yes | The name of the Azure Data Factory instance. Default: `hi-data-factory`. |
 | `ls_data_lake_accountKey` | SecureString | Yes | Primary access key for the Azure Data Lake Storage Gen2 account. |
-| `ls_onprem_file_host` | String | Yes | UNC or local path to the on-premises source folder. Example: `C:\Users\YourName\source_files` |
+| `ls_onprem_file_host` | String | Yes | Local path to the on-premises source folder. Example: `C:\Users\YourName\source_files` |
 | `ls_onprem_file_userId` | String | Yes | The Windows username for the SHIR host machine. |
 | `ls_onprem_file_password` | SecureString | Yes | The Windows account password for the SHIR host machine. |
 | `ls_sql_server` | String | Yes | Fully qualified Azure SQL server hostname. Example: `hi-server.database.windows.net` |
@@ -380,11 +308,11 @@ The newly committed ARM templates in this branch now represent a validated, depl
 
 | Criticality | Risk | Mitigation |
 |:---:|:---|:---|
-| **CRITICAL** | Committing secrets directly into `ARMTemplateParametersForFactory.json` | All three secret parameters (`accountKey`, `password` x2) must be provided at deployment time only. Never commit a parameter file containing real credentials to this or any public repository. Use Azure Key Vault references or CI/CD secret injection. |
+| **CRITICAL** | Committing secrets directly into `ARMTemplateParametersForFactory.json` | All secret parameters must be provided at deployment time only. Never commit a parameter file containing real credentials to any public repository. Use Azure Key Vault references or CI/CD secret injection. |
 | **CRITICAL** | Manually editing files in `adf_publish` | All manual edits will be overwritten and permanently lost on the next Publish All operation. All development must happen in the main branch. |
-| **HIGH** | Deploying to a resource group without the prerequisite infrastructure | The ARM template deploys the factory resources only. The ADLS Gen2 account, SQL Database, and SHIR must exist before deployment. Deploying without them will cause all Linked Services to fail their connection tests. |
-| **HIGH** | SHIR machine is offline during deployment | The factory will deploy successfully, but the `ls_onprem_file` Linked Service will show a yellow warning indicating the IR is unreachable. The `pl_onprem_to_bronze` pipeline will fail until the SHIR machine is back online and the runtime shows Connected. |
-| **MODERATE** | Trigger fires immediately after deployment | The `tr_daily_orchestration` trigger is deployed in a Stopped state by default and must be manually activated after deployment. Verify the trigger is not in a Started state before activating it in a new environment. |
+| **HIGH** | Deploying without the prerequisite infrastructure | The ARM template deploys the factory resources only. The ADLS Gen2 account, SQL Database, and SHIR must exist before deployment. Deploying without them will cause all Linked Services to fail their connection tests. |
+| **HIGH** | SHIR machine is offline during deployment | The factory will deploy successfully, but the `ls_onprem_file` Linked Service will show a warning indicating the IR is unreachable. The `pl_onprem_to_bronze` pipeline will fail until the SHIR machine is back online and shows Connected. |
+| **MODERATE** | Trigger fires immediately after deployment | The `tr_daily_orchestration` trigger is deployed in a Stopped state by default and must be manually activated after deployment. |
 | **MODERATE** | Wrong region selected for the new deployment | All resources (ADF, ADLS Gen2, Azure SQL) must be in the same Azure region to avoid cross-region data transfer costs and latency. |
 
 ---
