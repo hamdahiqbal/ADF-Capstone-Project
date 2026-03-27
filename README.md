@@ -3,7 +3,7 @@
 
 ---
 
-> [!IMPORTANT]
+
 > This document is a standalone engineering guide designed to transition a practitioner from initial resource provisioning to enterprise-grade DevOps automation. It is structured as a Comprehensive Technical Guide, providing the architectural blueprints and operational insights required to master Azure Data Factory.
 
 ---
@@ -199,7 +199,7 @@ This separation means if something breaks in Silver, Bronze is safe. If a busine
 
 ---
 
-## The 12-Phase Engineering Guide
+## The Phase-by-Phase Engineering Guide
 
 ---
 
