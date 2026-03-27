@@ -792,7 +792,7 @@
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
 									"wildcardFolderPath": "onprem",
-									"wildcardFileName": "DimPassenger.csv.",
+									"wildcardFileName": "DimPassenger.csv",
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
